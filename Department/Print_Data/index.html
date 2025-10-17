@@ -1,145 +1,144 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Print_Data</title>
+<link rel="stylesheet" href="./Print_Data_files/flaty.css">
+<link rel="stylesheet" href="./Print_Data_files/flaty-responsive.css">
 <link rel="shortcut icon" href="https://deeputsav.rmlauexams.in/img/favicon.png">
+
 <style>
 body {
-    margin:0; padding:0; background:#FAFAFA; font:12pt "Tahoma";
+    margin:0; padding:0; background-color:#FAFAFA; font:12pt "Tahoma";
 }
+* {box-sizing:border-box; -moz-box-sizing:border-box;}
+
 .page {
-    width:18cm; min-height:22cm; padding:0; margin:0 auto;
-    border-radius:5px; background:white;
-    box-shadow:0 0 5px rgba(0,0,0,0.1);
+    width:18cm; min-height:22cm; padding:0cm; margin:0 auto; border-radius:5px; background:white; box-shadow:0 0 5px rgba(0,0,0,0.1);
 }
-table {
-    width:100%; border-collapse: collapse; margin-bottom: 20px;
-    border: 15px solid #f38610; outline: 2px solid black;
-}
-table td {
-    vertical-align: top;
-}
-.responsive-image {
-    display:block; max-width:100%; height:auto;
-}
-.card-qr {
-    max-width:4cm; max-height:4cm;
-    border:5px solid orange; margin:0.3cm; object-fit:contain;
-}
-.card-photo {
-    max-width:4cm; max-height:5cm;
-    border:5px solid orange; margin:0.3cm; object-fit:cover;
-}
-.signature-img {
-    max-width:2.5cm; max-height:1.5cm; margin-top:0.3cm;
-}
+.subpage {padding:1cm; border:5px red solid; height:256mm; outline:2cm #FFEAEA solid;}
+.responsive-image {height:auto; width:100%;}
+#nirdesh {color:#280856;}
+#dvaapat {text-align:center; margin-left:30%; margin-right:30%; background-color:#f38610;}
+
+table {width:100%; border-collapse:collapse; margin-bottom:20px; padding:0.5cm; border:15px solid #f38610; outline:2px solid black;}
+
 @media print {
-    .page { width:8cm; min-height:10cm; box-shadow:none; }
+    .page {width:8cm; min-height:10cm; box-shadow:none; background:none; page-break-after:always;}
+    table {margin:0.5cm 5cm 0.25cm 5cm; padding:0.5cm; border:15px solid #f38610; outline:2px solid black;}
+    table, th, td {display:table-cell;}
+    body {font-size:10pt; margin:-10px;}
 }
+
+.card-qr, .card-photo {display:block; width:100%; height:auto; object-fit:contain;}
+.qr-container, .photo-container {border:5px solid orange; padding:0.2cm; margin:0.3cm; display:inline-block;}
 </style>
+
 </head>
 <body>
 
+<div class="book">
 <div class="page">
-    <table>
-        <!-- Logo -->
-        <tr>
-            <td colspan="5" style="text-align:center;">
-                <img src="https://deeputsav.rmlauexams.in/img/NEWPRINTLOGO.png" style="height:auto; max-width:12cm;">
-            </td>
-        </tr>
 
-        <!-- Title -->
-        <tr>
-            <td colspan="5" style="text-align:center; font-size:18pt; font-weight:bold;">
-                परिचय पत्र
-            </td>
-        </tr>
+<div class="container">
+    <div class="row">
 
-        <!-- CR No -->
-        <tr>
-            <td colspan="5" style="font-size:14pt; padding-top:0.2cm;">
-                <b>क्रo - {{cr_no}}</b>
-            </td>
-        </tr>
+        <table class="table-responsive">
+            <thead>
+                <tr>
+                    <td colspan="5">
+                        <div class="box-title">
+                            <img src="https://deeputsav.rmlauexams.in/img/NEWPRINTLOGO.png" class="responsive-image">
+                        </div>
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="5" style="text-align:center"><h5><b>परिचय पत्र</b></h5></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td colspan="4"><h5><b>क्रo - G07-03923</b></h5></td>
+                </tr>
 
-        <!-- QR and Photo -->
-        <tr>
-            <td colspan="2">
-                <img class="card-qr" src="./qr_codes/{{qr_filename}}">
-            </td>
-            <td colspan="3">
-                <img class="card-photo" src="./photos/{{photo_filename}}">
-            </td>
-        </tr>
+                <tr>
+                    <!-- QR code -->
+                    <td colspan="2" class="qr-container">
+                        <img class="card-qr" src="./qr_codes/{{qr_filename}}">
+                    </td>
 
-        <!-- College -->
-        <tr>
-            <td colspan="5" style="text-align:center; font-size:16pt; padding-top:0.2cm;">
-                <b>{{college}}</b>
-            </td>
-        </tr>
+                    <!-- User photo -->
+                    <td colspan="3" class="photo-container">
+                        <img class="card-photo" src="./photos/{{photo_filename}}">
+                    </td>
+                </tr>
 
-        <!-- Name -->
-        <tr>
-            <td></td>
-            <td><b>नाम :</b></td>
-            <td colspan="3"><b>{{name}}</b></td>
-        </tr>
+                <tr style="height:0.5cm;"></tr>
+                <tr>
+                    <td colspan="5" style="text-align:center;font-size:18px">
+                        <b>का.सु. साकेत पी.जी. कॉलेज अयोध्या</b>
+                    </td>
+                </tr>
 
-        <!-- Mobile -->
-        <tr>
-            <td></td>
-            <td><b>मोबाइल नंo :</b></td>
-            <td colspan="3"><b>{{phone}}</b></td>
-        </tr>
+                <tr style="height:0.5cm;"></tr>
+                <tr>
+                    <td></td>
+                    <td><b>नाम :</b></td>
+                    <td colspan="3"><b>{{user_name}}</b></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><b>मोबाइल नंo :</b></td>
+                    <td colspan="3"><b>{{user_mobile}}</b></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><b>तैनाती स्थल:</b></td>
+                    <td colspan="3"><b>राम की पैड़ी घाट नं : {{ghat_number}}</b></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><b>दायित्व :</b></td>
+                    <td colspan="3"><b>{{user_role}}</b></td>
+                </tr>
 
-        <!-- Ghat -->
-        <tr>
-            <td></td>
-            <td><b>तैनाती स्थल :</b></td>
-            <td colspan="3"><b>{{ghat}}</b></td>
-        </tr>
+                <tr style="height:1cm;"></tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <img class="responsive-image" style="height:1.5cm; width:2.5cm;" src="https://deeputsav.rmlauexams.in/img/SIGNSS.png">
+                    </td>
+                    <td style="text-align:right">
+                        <img class="responsive-image" style="height:1.5cm; width:3cm;" src="https://deeputsav.rmlauexams.in/img/SIGN.png">
+                    </td>
+                </tr>
 
-        <!-- Role -->
-        <tr>
-            <td></td>
-            <td><b>दायित्व :</b></td>
-            <td colspan="3"><b>{{role}}</b></td>
-        </tr>
+                <tr style="border-bottom:2px dashed black;">
+                    <td></td>
+                    <td style="text-align:left"><b>प्राधिकृत हस्ताक्षरी <br>संस्था/इकाई</b></td>
+                    <td></td>
+                    <td><b>नोडल अधिकारी</b></td>
+                    <td style="text-align:right"><b>प्राधिकृत हस्ताक्षरी <br> जिला प्रशासन</b></td>
+                </tr>
 
-        <!-- Signatures -->
-        <tr style="height:1cm;"></tr>
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td>
-                <img class="signature-img" src="https://deeputsav.rmlauexams.in/img/SIGNSS.png">
-            </td>
-            <td style="text-align:right;">
-                <img class="signature-img" src="https://deeputsav.rmlauexams.in/img/SIGN.png">
-            </td>
-        </tr>
+                <tr style="height:0.7cm;"></tr>
+                <tr>
+                    <td colspan="5" style="text-align:center">
+                        <h6><b>आपात संपर्क सूत्र-</b> &nbsp; +91 8808160420 &nbsp; +91 9170838005</h6>
+                    </td>
+                </tr>
 
-        <tr style="border-bottom:2px dashed black;">
-            <td></td>
-            <td><b>प्राधिकृत हस्ताक्षरी<br>संस्था/इकाई</b></td>
-            <td></td>
-            <td><b>नोडल अधिकारी</b></td>
-            <td style="text-align:right;"><b>प्राधिकृत हस्ताक्षरी<br>जिला प्रशासन</b></td>
-        </tr>
+            </tbody>
+        </table>
 
-        <!-- Emergency contacts -->
-        <tr style="height:0.7cm;"></tr>
-        <tr>
-            <td colspan="5" style="text-align:center; font-size:10pt;">
-                <b>आपात संपर्क सूत्र -</b> &nbsp; +91 8808160420 &nbsp; +91 9170838005
-            </td>
-        </tr>
-    </table>
+    </div>
+</div>
+
+</div>
 </div>
 
 </body>
