@@ -2,144 +2,123 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Print_Data</title>
-<link rel="stylesheet" href="./Print_Data_files/flaty.css">
-<link rel="stylesheet" href="./Print_Data_files/flaty-responsive.css">
-<link rel="shortcut icon" href="https://deeputsav.rmlauexams.in/img/favicon.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
-body {
-    margin:0; padding:0; background-color:#FAFAFA; font:12pt "Tahoma";
-}
-* {box-sizing:border-box; -moz-box-sizing:border-box;}
-
-.page {
-    width:18cm; min-height:22cm; padding:0cm; margin:0 auto; border-radius:5px; background:white; box-shadow:0 0 5px rgba(0,0,0,0.1);
-}
-.subpage {padding:1cm; border:5px red solid; height:256mm; outline:2cm #FFEAEA solid;}
-.responsive-image {height:auto; width:100%;}
-#nirdesh {color:#280856;}
-#dvaapat {text-align:center; margin-left:30%; margin-right:30%; background-color:#f38610;}
-
-table {width:100%; border-collapse:collapse; margin-bottom:20px; padding:0.5cm; border:15px solid #f38610; outline:2px solid black;}
-
-@media print {
-    .page {width:8cm; min-height:10cm; box-shadow:none; background:none; page-break-after:always;}
-    table {margin:0.5cm 5cm 0.25cm 5cm; padding:0.5cm; border:15px solid #f38610; outline:2px solid black;}
-    table, th, td {display:table-cell;}
-    body {font-size:10pt; margin:-10px;}
-}
-
-.card-qr, .card-photo {display:block; width:100%; height:auto; object-fit:contain;}
-.qr-container, .photo-container {border:5px solid orange; padding:0.2cm; margin:0.3cm; display:inline-block;}
+body { margin:0; padding:0; background:#FAFAFA; font:12pt "Tahoma"; }
+.page { width:18cm; min-height:22cm; padding:0cm; margin:0 auto; background:white; box-shadow:0 0 5px rgba(0,0,0,0.1);}
+.responsive-image { width:100%; height:auto; }
+table { width:100%; border-collapse:collapse; border:15px solid #f38610; outline:2px solid black; margin-bottom:20px;}
 </style>
-
 </head>
 <body>
 
-<div class="book">
 <div class="page">
-
 <div class="container">
-    <div class="row">
+<table>
+    <thead>
+        <tr>
+            <td colspan="5">
+                <img src="NEWPRINTLOGO.png" class="responsive-image">
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td colspan="5" style="text-align:center"><b>परिचय पत्र</b></td>
+        </tr>
 
-        <table class="table-responsive">
-            <thead>
-                <tr>
-                    <td colspan="5">
-                        <div class="box-title">
-                            <img src="https://deeputsav.rmlauexams.in/img/NEWPRINTLOGO.png" class="responsive-image">
-                        </div>
-                    </td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td colspan="5" style="text-align:center"><h5><b>परिचय पत्र</b></h5></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td colspan="4"><h5><b>क्रo - G07-03923</b></h5></td>
-                </tr>
+        <tr>
+            <td></td>
+            <td><b>क्रo - </b><span id="user-id"></span></td>
+        </tr>
 
-                <tr>
-                    <!-- QR code -->
-                    <td colspan="2" class="qr-container">
-                        <img class="card-qr" src="./qr_codes/{{qr_filename}}">
-                    </td>
+        <tr>
+            <td colspan="2">
+                <img id="user-qr" src="" style="height:4cm;width:4cm;border:5px solid orange;">
+            </td>
+            <td colspan="3">
+                <img id="user-photo" src="" style="height:5cm;width:4cm;border:5px solid orange;">
+            </td>
+        </tr>
 
-                    <!-- User photo -->
-                    <td colspan="3" class="photo-container">
-                        <img class="card-photo" src="./photos/{{photo_filename}}">
-                    </td>
-                </tr>
+        <tr>
+            <td colspan="5" style="text-align:center;font-size:18px"><b id="user-college"></b></td>
+        </tr>
 
-                <tr style="height:0.5cm;"></tr>
-                <tr>
-                    <td colspan="5" style="text-align:center;font-size:18px">
-                        <b>का.सु. साकेत पी.जी. कॉलेज अयोध्या</b>
-                    </td>
-                </tr>
+        <tr>
+            <td></td>
+            <td><b>नाम :</b></td>
+            <td colspan="3" id="user-name"></td>
+        </tr>
 
-                <tr style="height:0.5cm;"></tr>
-                <tr>
-                    <td></td>
-                    <td><b>नाम :</b></td>
-                    <td colspan="3"><b>{{user_name}}</b></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td><b>मोबाइल नंo :</b></td>
-                    <td colspan="3"><b>{{user_mobile}}</b></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td><b>तैनाती स्थल:</b></td>
-                    <td colspan="3"><b>राम की पैड़ी घाट नं : {{ghat_number}}</b></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td><b>दायित्व :</b></td>
-                    <td colspan="3"><b>{{user_role}}</b></td>
-                </tr>
+        <tr>
+            <td></td>
+            <td><b>मोबाइल नंo :</b></td>
+            <td colspan="3" id="user-phone"></td>
+        </tr>
 
-                <tr style="height:1cm;"></tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        <img class="responsive-image" style="height:1.5cm; width:2.5cm;" src="https://deeputsav.rmlauexams.in/img/SIGNSS.png">
-                    </td>
-                    <td style="text-align:right">
-                        <img class="responsive-image" style="height:1.5cm; width:3cm;" src="https://deeputsav.rmlauexams.in/img/SIGN.png">
-                    </td>
-                </tr>
+        <tr>
+            <td></td>
+            <td><b>तैनाती स्थल:</b></td>
+            <td colspan="3" id="user-ghat"></td>
+        </tr>
 
-                <tr style="border-bottom:2px dashed black;">
-                    <td></td>
-                    <td style="text-align:left"><b>प्राधिकृत हस्ताक्षरी <br>संस्था/इकाई</b></td>
-                    <td></td>
-                    <td><b>नोडल अधिकारी</b></td>
-                    <td style="text-align:right"><b>प्राधिकृत हस्ताक्षरी <br> जिला प्रशासन</b></td>
-                </tr>
-
-                <tr style="height:0.7cm;"></tr>
-                <tr>
-                    <td colspan="5" style="text-align:center">
-                        <h6><b>आपात संपर्क सूत्र-</b> &nbsp; +91 8808160420 &nbsp; +91 9170838005</h6>
-                    </td>
-                </tr>
-
-            </tbody>
-        </table>
-
-    </div>
-</div>
-
+        <tr>
+            <td></td>
+            <td><b>दायित्व :</b></td>
+            <td colspan="3" id="user-role"></td>
+        </tr>
+    </tbody>
+</table>
 </div>
 </div>
+
+<script>
+// CONFIG
+const BASE_URL = "https://deeputsavrmlauexamsin.github.io/Department/Print_Data/";
+const CSV_URL = "https://raw.githubusercontent.com/deeputsavrmlauexamsin/deeputsavrmlauexamsin.github.io/main/Department/Print_Data/data.csv";
+
+async function loadUser() {
+    const params = new URLSearchParams(window.location.search);
+    const slug = params.get('ID');
+    if(!slug) return;
+
+    const response = await fetch(CSV_URL);
+    const csvText = await response.text();
+
+    const lines = csvText.split('\n').filter(l => l.trim() !== '');
+    const headers = lines[0].split('\t');
+    let userData = null;
+
+    for(let i=1;i<lines.length;i++){
+        const values = lines[i].split('\t');
+        let row = {};
+        headers.forEach((h,j)=> row[h]=values[j]);
+        if(row.slug === slug){
+            userData = row;
+            break;
+        }
+    }
+
+    if(!userData) return;
+
+    // Fill HTML
+    document.getElementById('user-id').innerText = userData.id;
+    document.getElementById('user-name').innerText = userData.name;
+    document.getElementById('user-phone').innerText = userData.phone;
+    document.getElementById('user-ghat').innerText = userData.ghat;
+    document.getElementById('user-role').innerText = userData.role;
+    document.getElementById('user-college').innerText = userData.college;
+
+    document.getElementById('user-photo').src = "photos/" + userData.photo;
+    document.getElementById('user-qr').src = "qr_codes/" + userData.id + "_QR.png";
+}
+
+window.onload = loadUser();
+</script>
 
 </body>
 </html>
