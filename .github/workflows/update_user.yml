@@ -14,87 +14,91 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
-      - name: Install dependencies
+      - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install qrcode pillow
 
-      - name: Process payload and commit
-        env:
-          GH_REPO: ${{ github.repository }}
-        shell: bash
+      - name: Save payload to file
         run: |
-          cat > run_update.py <<'PY'
-import base64, csv, os, json, time
+          echo '${{ toJson(github.event.client_payload) }}' > payload.json
+          echo "Saved payload.json"
+
+      - name: Process payload, create QR, update CSV and commit
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          python3 - <<'PY'
+import json, base64, csv, os, time
 from pathlib import Path
-from PIL import Image
 import qrcode
 
-payload = json.loads(os.environ["PAYLOAD"])
+# Load payload
+with open("payload.json","r",encoding="utf-8") as f:
+    payload = json.load(f)
 
-base = Path("Department/Print_Data")
-photos = base/"photos"
-qrs = base/"qr_codes"
-csv_path = base/"data.csv"
-for p in [base, photos, qrs]:
+# Paths
+BASE = Path("Department/Print_Data")
+PHOTOS = BASE / "photos"
+QRS = BASE / "qr_codes"
+CSV = BASE / "data.csv"
+
+for p in (BASE, PHOTOS, QRS):
     p.mkdir(parents=True, exist_ok=True)
 
+# ID & slug
 uid = str(int(time.time()))
 slug = base64.b64encode(uid.encode()).decode()[:6]
 
-photo_data = payload.get("photo_data_url","")
-photo_filename = f"{uid}_photo.jpg"
-if photo_data.startswith("data:"):
-    _,b64 = photo_data.split(",",1)
-    with open(photos/photo_filename,"wb") as f:
-        f.write(base64.b64decode(b64))
-else:
-    photo_filename=""
+# If photo_filename provided, keep it. (Frontend should have uploaded it already)
+photo_filename = payload.get("photo_filename", "")
 
+# Generate QR linking to card
 qr_filename = f"{uid}_QR.png"
-link = f"https://{os.environ.get('GH_REPO')}/Department/Print_Data/?ID={slug}"
-qr=qrcode.QRCode(box_size=10,border=4)
-qr.add_data(link)
+card_link = f"https://{os.environ.get('GITHUB_REPOSITORY')}/Department/Print_Data/?ID={slug}"
+qr = qrcode.QRCode(box_size=8, border=2)
+qr.add_data(card_link)
 qr.make(fit=True)
-img=qr.make_image(fill_color="black",back_color="white")
-img.save(qrs/qr_filename)
+img = qr.make_image(fill_color="black", back_color="white")
+img.save(QRS / qr_filename)
 
-fields=["id","slug","name","phone","ghat","role","photo","college"]
-data={
-  "id":uid,
-  "slug":slug,
-  "name":payload.get("name",""),
-  "phone":payload.get("phone",""),
-  "ghat":f"राम की पैड़ी घाट नं : {payload.get('ghat','')}",
-  "role":payload.get("role",""),
-  "photo":photo_filename,
-  "college":payload.get("college","")
+# Prepare CSV row (TSV)
+row = {
+  "id": uid,
+  "slug": slug,
+  "name": payload.get("name",""),
+  "phone": payload.get("phone",""),
+  "ghat": f"राम की पैड़ी घाट नं : {payload.get('ghat','')}",
+  "role": payload.get("role",""),
+  "photo": photo_filename,
+  "college": payload.get("college","")
 }
 
-rows=[]
-if csv_path.exists():
-    txt=csv_path.read_text(encoding="utf-8").strip()
+fields = ["id","slug","name","phone","ghat","role","photo","college"]
+rows = []
+if CSV.exists():
+    txt = CSV.read_text(encoding="utf-8").strip()
     if txt:
-        reader=csv.DictReader(txt.splitlines(),delimiter='\t')
+        reader = csv.DictReader(txt.splitlines(), delimiter="\t")
         rows.extend(reader)
-rows.append(data)
+rows.append(row)
+with open(CSV, "w", encoding="utf-8", newline="") as f:
+    w = csv.DictWriter(f, fieldnames=fields, delimiter="\t")
+    w.writeheader()
+    w.writerows(rows)
 
-with open(csv_path,"w",encoding="utf-8",newline="") as f:
-    w=csv.DictWriter(f,fieldnames=fields,delimiter='\t')
-    w.writeheader(); w.writerows(rows)
+# Commit & push
+os.system('git add -A')
+os.system(f'git commit -m "Add user {row["name"]} id={uid}" || true')
+os.system('git push origin HEAD:main || true')
 
-os.system("git add -A")
-os.system(f'git commit -m \"Add user {data['name']} id={uid}\" || true')
-os.system("git push origin HEAD:main || true")
-print("✅ Done:", uid)
+print("DONE:", uid)
 PY
-
-          python run_update.py
-        env:
-          PAYLOAD: ${{ toJson(github.event.client_payload) }}
