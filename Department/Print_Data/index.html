@@ -4,21 +4,122 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Print_Data</title>
+<link href="./Print_Data_files/flaty.css" rel="stylesheet">
+<link href="./Print_Data_files/flaty-responsive.css" rel="stylesheet">
+<link rel="shortcut icon" href="https://deeputsav.rmlauexams.in/img/favicon.png">
+<script src="./Print_Data_files/jquery.min.js"></script>
+<script src="./Print_Data_files/bootstrap.min.js"></script>
+
 <style>
-body { margin:0; font-family: "Tahoma"; background:#FAFAFA; }
-.page { width:18cm; min-height:22cm; margin:0 auto; padding:1cm; background:white; box-shadow:0 0 5px rgba(0,0,0,0.1); }
-.responsive-image { height:auto; width:100%; }
-.table-card { width:100%; border-collapse:collapse; border:15px solid #f38610; outline:2px solid black; }
-td, th { vertical-align: middle; }
-.qr-block, .photo-block { padding:10px; }
-@media print {
-    .page { width:8cm; min-height:10cm; box-shadow:none; background:none; page-break-after:always; }
-    body { font-size:10pt; margin:-10px; }
-}
+    body { margin: 0; padding: 0; background-color: #FAFAFA; font: 12pt "Tahoma"; }
+    * { box-sizing: border-box; -moz-box-sizing: border-box; }
+    .page { width:18cm; min-height: 22cm; padding: 0cm; margin: 0cm auto; border-radius: 5px; background: white; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; padding: 0.5cm; border: 15px solid #f38610; outline: 2px solid black; }
+    .responsive-image { height: auto; width: 100%; }
+    .qr-block { border: 5px solid orange; padding: 5px; display: inline-block; margin: 5px; }
+    @media print {
+        .page { width: 8cm; min-height: 10cm; box-shadow: initial; background: initial; page-break-after: always; }
+        body { font-size: 10pt; margin: -10px; }
+        table { display: table; margin: 0.5cm 5cm 0.25cm 5cm; padding: 0.5cm; border: 15px solid #f38610; outline: 2px solid black; }
+    }
 </style>
 </head>
 <body>
-<div id="cards-container"></div>
+
+<div class="book">
+    <div class="page">
+        <div class="container">
+            <div class="row">
+                <table class="table-responsive">
+                    <thead>
+                        <tr>
+                            <td colspan="5">
+                                <div class="box-title">
+                                    <img src="https://deeputsav.rmlauexams.in/img/NEWPRINTLOGO.png" class="responsive-image">
+                                </div>
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="5"><h5 style="text-align:center"><b>परिचय पत्र</b></h5></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td><h5 style="text-align:left"><b>क्रo - <span class="user-slug"></span></b></h5></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div class="qr-block">
+                                    <img class="responsive-image user-qr" src="" style="height:4cm; width:4cm;">
+                                </div>
+                            </td>
+                            <td colspan="3">
+                                <img class="responsive-image user-photo" src="" style="height:5cm; width:4cm; border:5px solid orange;">
+                            </td>
+                        </tr>
+                        <tr style="height:0.5cm;"></tr>
+                        <tr>
+                            <td colspan="5" style="text-align:center;font-size:18px">
+                                <b><span class="user-college"></span></b>
+                            </td>
+                        </tr>
+                        <tr style="height:0.5cm;"></tr>
+                        <tr>
+                            <td></td>
+                            <td><b>नाम :</b></td>
+                            <td colspan="3"><b><span class="user-name"></span></b></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td><b>मोबाइल नंo :</b></td>
+                            <td colspan="3"><b><span class="user-phone"></span></b></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td><b>तैनाती स्थल:</b></td>
+                            <td colspan="3"><b><span class="user-ghat"></span></b></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td><b>दायित्व :</b></td>
+                            <td colspan="3"><b><span class="user-role"></span></b></td>
+                        </tr>
+                        <tr style="height:1cm;"></tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <img class="responsive-image" style="height:1.5cm; width:2.5cm;" src="https://deeputsav.rmlauexams.in/img/SIGNSS.png">
+                            </td>
+                            <td style="text-align:right">
+                                <img class="responsive-image" style="height:1.5cm; width:3cm;" src="https://deeputsav.rmlauexams.in/img/SIGN.png">
+                            </td>
+                        </tr>
+                        <tr style="border-bottom:2px dashed black;">
+                            <td></td>
+                            <td style="text-align:left"><b>प्राधिकृत हस्ताक्षरी <br>संस्था/इकाई</b></td>
+                            <td></td>
+                            <td><b>नोडल अधिकारी</b></td>
+                            <td style="text-align:right"><b>प्राधिकृत हस्ताक्षरी <br> जिला प्रशासन</b></td>
+                        </tr>
+                        <tr style="height:0.7cm;"></tr>
+                        <tr>
+                            <td colspan="7">
+                                <h6 style="text-align:center">
+                                    <b>आपात संपर्क सूत्र-</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    +91 8808160420 &nbsp;&nbsp;&nbsp;&nbsp;
+                                    +91 9170838005 &nbsp;&nbsp;&nbsp;&nbsp;
+                                </h6>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
 const BASE_URL = "https://deeputsavrmlauexamsin.github.io/Department/Print_Data/";
@@ -36,56 +137,23 @@ async function loadCSV() {
     return users;
 }
 
-function createCard(user) {
-    return `
-    <div class="page">
-        <table class="table-card">
-            <thead>
-                <tr><td colspan="5" style="text-align:center; padding-top:15px;">
-                    <img src="https://deeputsav.rmlauexams.in/img/NEWPRINTLOGO.png" style="width:200px; height:auto;">
-                </td></tr>
-                <tr><td colspan="5" style="text-align:center; padding-top:5px;"><h5><b>परिचय पत्र</b></h5></td></tr>
-            </thead>
-            <tbody>
-                <tr><td></td><td><b>क्रo - ${user.slug}</b></td></tr>
-                <tr>
-                    <td colspan="2" style="text-align:center;"><div class="qr-block">
-                        <img src="${BASE_URL}qr_codes/${user.id}_QR.png" style="border:5px solid orange;">
-                    </div></td>
-                    <td colspan="3" style="text-align:center;"><div class="photo-block">
-                        <img src="${BASE_URL}photos/${user.photo}" style="border:5px solid orange;">
-                    </div></td>
-                </tr>
-                <tr><td colspan="5" style="text-align:center; font-size:18px; padding-top:5px;"><b>${user.college}</b></td></tr>
-                <tr><td></td><td><b>नाम :</b></td><td colspan="3"><b>${user.name}</b></td></tr>
-                <tr><td></td><td><b>मोबाइल नंo :</b></td><td colspan="3"><b>${user.phone}</b></td></tr>
-                <tr><td></td><td><b>तैनाती स्थल:</b></td><td colspan="3"><b>${user.ghat}</b></td></tr>
-                <tr><td></td><td><b>दायित्व :</b></td><td colspan="3"><b>${user.role}</b></td></tr>
-                <tr><td></td><td></td><td></td>
-                    <td><img src="https://deeputsav.rmlauexams.in/img/SIGNSS.png" style="height:1.5cm; width:2.5cm; margin-top:10px;"></td>
-                    <td style="text-align:right;"><img src="https://deeputsav.rmlauexams.in/img/SIGN.png" style="height:1.5cm; width:3cm; margin-top:10px;"></td>
-                </tr>
-                <tr style="border-bottom:2px dashed black;">
-                    <td></td><td><b>प्राधिकृत हस्ताक्षरी <br>संस्था/इकाई</b></td><td></td>
-                    <td><b>नोडल अधिकारी</b></td>
-                    <td style="text-align:right;"><b>प्राधिकृत हस्ताक्षरी <br>जिला प्रशासन</b></td>
-                </tr>
-                <tr><td colspan="5" style="text-align:center; padding-top:15px;">
-                    <b>आपात संपर्क सूत्र-</b> &nbsp; +91 8808160420 &nbsp; +91 9170838005
-                </td></tr>
-            </tbody>
-        </table>
-    </div>
-    `;
+function fillCard(user) {
+    document.querySelector(".user-slug").innerText = user.slug;
+    document.querySelector(".user-name").innerText = user.name;
+    document.querySelector(".user-phone").innerText = user.phone;
+    document.querySelector(".user-ghat").innerText = user.ghat;
+    document.querySelector(".user-role").innerText = user.role;
+    document.querySelector(".user-college").innerText = user.college;
+    document.querySelector(".user-photo").src = BASE_URL + "photos/" + user.photo;
+    document.querySelector(".user-qr").src = BASE_URL + "qr_codes/" + user.id + "_QR.png";
 }
 
-async function renderCards() {
-    const users = await loadCSV();
-    const container = document.getElementById("cards-container");
-    container.innerHTML = users.map(u => createCard(u)).join("");
-}
-
-renderCards();
+loadCSV().then(users => {
+    if(users.length > 0){
+        fillCard(users[users.length-1]); // latest user
+    }
+});
 </script>
+
 </body>
 </html>
