@@ -11,7 +11,7 @@ jobs:
   handle-dispatch:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           persist-credentials: true
@@ -21,112 +21,95 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Install Python dependencies
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install pyyaml qrcode pillow
 
-      - name: Read event payload
-        id: payload
+      - name: Save payload to file
         run: |
-          echo "Event payload:"
           echo '${{ toJson(github.event.client_payload) }}' > payload.json
-          echo "Payload saved to payload.json"
+          echo "Payload saved."
 
-      - name: Run update script
+      - name: Process payload and update files
         env:
           REPO: ${{ github.repository }}
           GH_ACTOR: ${{ github.actor }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           python - <<'PY'
-import base64, csv, io, os, sys, json, time
+import base64, csv, os, json, time
 from pathlib import Path
-from datetime import datetime
 from PIL import Image
 import qrcode
 
-# Load payload
-with open('payload.json','r',encoding='utf-8') as f:
+# Load client payload
+with open('payload.json', 'r', encoding='utf-8') as f:
     payload = json.load(f)
 
-# repo paths
 BASE = Path("Department/Print_Data")
 PHOTOS = BASE / "photos"
 QRS = BASE / "qr_codes"
 CSV_PATH = BASE / "data.csv"
 
-PHOTOS.mkdir(parents=True, exist_ok=True)
-QRS.mkdir(parents=True, exist_ok=True)
-BASE.mkdir(parents=True, exist_ok=True)
+for p in [BASE, PHOTOS, QRS]:
+    p.mkdir(parents=True, exist_ok=True)
 
-# Determine next ID (use timestamp)
+# Unique ID and slug
 next_id = str(int(time.time()))
 slug = payload.get("slug") or base64.b64encode(next_id.encode()).decode()[:6]
 
-# Save photo (payload may include data URL)
-photo_data_url = payload.get("photo_data_url", "")
+# Save photo
+photo_data = payload.get("photo_data_url", "")
 photo_filename = f"{next_id}_photo.jpg"
-if photo_data_url.startswith("data:"):
-    header, b64 = photo_data_url.split(",",1)
-    photo_bytes = base64.b64decode(b64)
-    with open(PHOTOS/photo_filename, "wb") as fh:
-        fh.write(photo_bytes)
+if photo_data.startswith("data:"):
+    header, b64 = photo_data.split(",", 1)
+    with open(PHOTOS / photo_filename, "wb") as f:
+        f.write(base64.b64decode(b64))
 else:
     photo_filename = ""
 
-# Generate QR
+# Make QR
 qr_filename = f"{next_id}_QR.png"
 link = f"https://{os.environ.get('REPO','')}/Department/Print_Data/?ID={slug}"
 qr = qrcode.QRCode(box_size=10, border=4)
 qr.add_data(link)
 qr.make(fit=True)
 img = qr.make_image(fill_color="black", back_color="white")
-img.save(QRS/qr_filename)
+img.save(QRS / qr_filename)
 
-# Gather user data
-name_en = payload.get("name","")
-phone = payload.get("phone","")
-card_no = payload.get("card_number","")
-ghat_no = payload.get("ghat","")
-role_en = payload.get("role","")
-college_en = payload.get("college","")
+# Gather details
+data = {
+    "id": next_id,
+    "slug": slug,
+    "name": payload.get("name", ""),
+    "phone": payload.get("phone", ""),
+    "ghat": f"राम की पैड़ी घाट नं : {payload.get('ghat', '')}",
+    "role": payload.get("role", ""),
+    "photo": photo_filename,
+    "college": payload.get("college", "")
+}
 
-# Create display ghat text
-ghat_text = f"राम की पैड़ी घाट नं : {ghat_no}"
-
-# Append to CSV (TSV format)
-fieldnames = ["id","slug","name","phone","ghat","role","photo","college"]
+# Append to TSV
+fields = ["id","slug","name","phone","ghat","role","photo","college"]
 rows = []
 if CSV_PATH.exists():
     with open(CSV_PATH, "r", encoding="utf-8") as f:
         txt = f.read().strip()
-    if txt:
-        reader = csv.DictReader(txt.splitlines(), delimiter='\t')
-        for r in reader:
-            rows.append(r)
-
-rows.append({
-    "id": next_id,
-    "slug": slug,
-    "name": name_en,
-    "phone": phone,
-    "ghat": ghat_text,
-    "role": role_en,
-    "photo": photo_filename,
-    "college": college_en
-})
-
+        if txt:
+            reader = csv.DictReader(txt.splitlines(), delimiter='\t')
+            rows.extend(reader)
+rows.append(data)
 with open(CSV_PATH, "w", encoding="utf-8", newline='') as f:
-    w = csv.DictWriter(f, fieldnames=fieldnames, delimiter='\t')
+    w = csv.DictWriter(f, fieldnames=fields, delimiter='\t')
     w.writeheader()
     w.writerows(rows)
 
-# Commit and push
+# Commit
 os.system('git add -A')
-os.system(f'git commit -m "Add user {name_en} id={next_id}" || true')
+os.system(f'git commit -m "Add user {data["name"]} id={next_id}" || true')
 os.system('git push origin HEAD:main || true')
 PY
 
-      - name: Show completion info
-        run: echo "Workflow finished. Check Department/Print_Data for new files."
+      - name: Done
+        run: echo "✅ User update workflow complete."
