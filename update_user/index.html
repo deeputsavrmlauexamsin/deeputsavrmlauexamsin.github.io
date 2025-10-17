@@ -99,36 +99,137 @@
   </div>
 
 <script>
-/* CONFIG */
-const PAGE_PIN = "9020";             // your PIN (as requested)
-const REPO_OWNER = "deeputsavrmlauexamsin";
-const REPO_NAME = "deeputsavrmlauexamsin.github.io";
-const DISPATCH_EVENT = "update_user"; // repository_dispatch event type
-const BASE_CARD_URL = `https://${REPO_OWNER}.github.io/Department/Print_Data/?ID=`;
+document.addEventListener("DOMContentLoaded", function() {
+  const PAGE_PIN = "9020";
+  const REPO_OWNER = "deeputsavrmlauexamsin";
+  const REPO_NAME = "deeputsavrmlauexamsin.github.io";
+  const DISPATCH_EVENT = "update_user";
+  const BASE_CARD_URL = `https://${REPO_OWNER}.github.io/Department/Print_Data/?ID=`;
 
-/* helpers */
-const $ = id => document.getElementById(id);
-const setStatus = html => { $("status").innerHTML = html; };
+  const $ = id => document.getElementById(id);
+  const setStatus = html => $("status").innerHTML = html;
 
-/* unlock */
-$("unlock-btn").addEventListener("click", () => {
-  const pin = $("pin-input").value.trim();
-  if (pin === PAGE_PIN) {
-    $("pin-screen").classList.add("hidden");
-    $("main-form").classList.remove("hidden");
-    // restore token from localStorage if present
-    const saved = localStorage.getItem("gh_token_admin");
-    if (saved) $("gh-token").value = saved;
-  } else {
-    alert("Wrong PIN");
+  // --- unlock logic ---
+  $("unlock-btn").addEventListener("click", () => {
+    const pin = $("pin-input").value.trim();
+    if (pin === PAGE_PIN) {
+      $("pin-screen").classList.add("hidden");
+      $("main-form").classList.remove("hidden");
+      const saved = localStorage.getItem("gh_token_admin");
+      if (saved) $("gh-token").value = saved;
+    } else {
+      alert("❌ गलत PIN / Wrong PIN");
+    }
+  });
+
+  // --- token save/clear ---
+  $("save-token-btn").addEventListener("click", () => {
+    const t = $("gh-token").value.trim();
+    if (!t) return alert("Paste token first");
+    localStorage.setItem("gh_token_admin", t);
+    alert("Token saved in this browser.");
+  });
+
+  $("clear-token-btn").addEventListener("click", () => {
+    localStorage.removeItem("gh_token_admin");
+    $("gh-token").value = "";
+    alert("Saved token cleared.");
+  });
+
+  // --- file helper ---
+  function fileToDataURL(file) {
+    return new Promise((res, rej) => {
+      const fr = new FileReader();
+      fr.onload = () => res(fr.result);
+      fr.onerror = () => rej("File read error");
+      fr.readAsDataURL(file);
+    });
   }
-});
 
-/* token save/clear */
-$("save-token-btn").addEventListener("click", () => {
-  const t = $("gh-token").value.trim();
-  if (!t) return alert("Paste token first");
-  localStorage.setItem("gh_token_admin", t);
-  alert("Token saved in this browser (localStorage). Keep this device safe.");
+  function randomSlugBase64(len=6) {
+    const arr = new Uint8Array(6);
+    window.crypto.getRandomValues(arr);
+    let s = "";
+    arr.forEach(b => s += String.fromCharCode(b % 255));
+    let b64 = btoa(s).replace(/=+$/, "");
+    return b64.slice(0, len);
+  }
+
+  async function createQRDataURL(link, size=400) {
+    const url = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(link)}`;
+    const r = await fetch(url);
+    const blob = await r.blob();
+    return await new Promise(res => {
+      const fr = new FileReader();
+      fr.onload = () => res(fr.result);
+      fr.readAsDataURL(blob);
+    });
+  }
+
+  async function sendRepositoryDispatch(token, payload) {
+    const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/dispatches`;
+    const body = { event_type: DISPATCH_EVENT, client_payload: payload };
+    const r = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Accept": "application/vnd.github.v3+json",
+        "Authorization": "token " + token,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body)
+    });
+    if (!r.ok) throw new Error("Dispatch failed " + r.status);
+    return true;
+  }
+
+  // --- submit form ---
+  $("user-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    try {
+      setStatus("Preparing data...");
+      let token = $("gh-token").value.trim() || localStorage.getItem("gh_token_admin");
+      if (!token) return alert("Please paste your GitHub token first!");
+
+      const nameEn = $("name-en").value.trim();
+      const mobile = $("mobile").value.trim();
+      const cardNo = $("card-no").value.trim();
+      const ghatNo = $("ghat-no").value.trim();
+      const roleEn = $("role-en").value.trim();
+      const collegeEn = $("college-en").value.trim();
+      const photoFile = $("photo-input").files[0];
+      if (!photoFile) return alert("Please select a photo.");
+
+      const photoDataURL = await fileToDataURL(photoFile);
+      const slug = randomSlugBase64(6);
+      const cardLink = BASE_CARD_URL + slug;
+      const qrDataURL = await createQRDataURL(cardLink);
+
+      const payload = {
+        name: nameEn,
+        phone: mobile,
+        card_number: cardNo,
+        ghat: ghatNo,
+        role: roleEn,
+        college: collegeEn,
+        photo_data_url: photoDataURL,
+        qr_data_url: qrDataURL,
+        slug
+      };
+
+      setStatus("Sending to GitHub...");
+      await sendRepositoryDispatch(token, payload);
+
+      $("result-area").classList.remove("hidden");
+      $("card-link").href = cardLink;
+      $("card-link").textContent = cardLink;
+      $("result-qr").src = qrDataURL;
+      setStatus("✅ Sent! Wait ~30s for Action to finish.");
+
+    } catch (err) {
+      console.error(err);
+      alert("Error: " + err.message);
+      setStatus("Error: " + err.message);
+    }
+  });
 });
-$("clear
+</script>
