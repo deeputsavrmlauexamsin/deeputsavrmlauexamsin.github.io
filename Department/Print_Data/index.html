@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="hi">
 <head>
 <meta charset="UTF-8">
 <title>Print_Data</title>
@@ -11,6 +11,7 @@ body { margin:0; padding:0; background:#FAFAFA; font:12pt "Tahoma"; }
 .page { width:18cm; min-height:22cm; padding:0cm; margin:0 auto; background:white; box-shadow:0 0 5px rgba(0,0,0,0.1);}
 .responsive-image { width:100%; height:auto; }
 table { width:100%; border-collapse:collapse; border:15px solid #f38610; outline:2px solid black; margin-bottom:20px;}
+#dvaapat { text-align:center; margin-left:30%; margin-right:30%; background-color:#f38610; }
 </style>
 </head>
 <body>
@@ -21,7 +22,7 @@ table { width:100%; border-collapse:collapse; border:15px solid #f38610; outline
     <thead>
         <tr>
             <td colspan="5">
-                <img src="NEWPRINTLOGO.png" class="responsive-image">
+                <img src="https://deeputsavrmlauexamsin.github.io/Department/Print_Data/NEWPRINTLOGO.png" class="responsive-image">
             </td>
         </tr>
     </thead>
@@ -71,6 +72,22 @@ table { width:100%; border-collapse:collapse; border:15px solid #f38610; outline
             <td><b>दायित्व :</b></td>
             <td colspan="3" id="user-role"></td>
         </tr>
+
+        <!-- Signature placeholders -->
+        <tr>
+            <td> </td>
+            <td style="text-align:left"><b> प्राधिकृत हस्ताक्षरी <br>संस्था/इकाई</b></td>
+            <td></td>
+            <td><b> नोडल अधिकारी</b></td>
+            <td style="text-align:right"><b> प्राधिकृत हस्ताक्षरी <br> जिला प्रशासन</b></td>
+        </tr>
+
+        <tr style="height:0.7cm;"></tr>
+        <tr>
+            <td colspan="5" style="text-align:center">
+                <b>आपात संपर्क सूत्र:</b> +91 8808160420 &nbsp;&nbsp; +91 9170838005
+            </td>
+        </tr>
     </tbody>
 </table>
 </div>
@@ -78,7 +95,7 @@ table { width:100%; border-collapse:collapse; border:15px solid #f38610; outline
 
 <script>
 // CONFIG
-const BASE_URL = "https://deeputsavrmlauexamsin.github.io/Department/Print_Data/";
+const BASE_URL = "https://deeputsavrmlauexamsin.github.io/Department/Print_Data/?ID=";
 const CSV_URL = "https://raw.githubusercontent.com/deeputsavrmlauexamsin/deeputsavrmlauexamsin.github.io/main/Department/Print_Data/data.csv";
 
 async function loadUser() {
@@ -113,8 +130,11 @@ async function loadUser() {
     document.getElementById('user-role').innerText = userData.role;
     document.getElementById('user-college').innerText = userData.college;
 
-    document.getElementById('user-photo').src = "photos/" + userData.photo;
-    document.getElementById('user-qr').src = "qr_codes/" + userData.id + "_QR.png";
+    document.getElementById('user-photo').src =
+      "https://deeputsavrmlauexamsin.github.io/Department/Print_Data/photos/" + encodeURIComponent(userData.photo);
+
+    document.getElementById('user-qr').src =
+      "https://deeputsavrmlauexamsin.github.io/Department/Print_Data/qr_codes/" + encodeURIComponent(userData.id + "_QR.png");
 }
 
 window.onload = loadUser();
