@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const correctPin = "9020";
+  const CORRECT_PIN = "9020";
+
   const unlockBtn = document.getElementById("unlock-btn");
   const pinInput = document.getElementById("pin");
   const lockSection = document.getElementById("lock-section");
@@ -8,9 +9,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const submitBtn = document.getElementById("submit-btn");
   const statusMsg = document.getElementById("status");
 
-  // Unlock section logic
+  console.log("✅ script loaded");
+
+  // Unlock logic
   unlockBtn.addEventListener("click", () => {
-    if (pinInput.value.trim() === correctPin) {
+    if (pinInput.value.trim() === CORRECT_PIN) {
       lockSection.style.display = "none";
       formSection.style.display = "block";
       errorMsg.textContent = "";
@@ -19,39 +22,27 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Function to upload a file to GitHub
-  async function uploadToGitHub(token, repo, path, fileContent, message) {
+  // GitHub file upload
+  async function uploadToGitHub(token, repo, path, base64Content, message) {
     const apiUrl = `https://api.github.com/repos/${repo}/contents/${path}`;
-    const getRes = await fetch(apiUrl, {
-      headers: { Authorization: `token ${token}` }
-    });
-
+    const getRes = await fetch(apiUrl, { headers: { Authorization: `token ${token}` } });
     let sha = null;
     if (getRes.ok) {
       const json = await getRes.json();
       sha = json.sha;
     }
-
-    const body = {
-      message: message,
-      content: btoa(fileContent),
-    };
+    const body = { message, content: base64Content };
     if (sha) body.sha = sha;
-
     const putRes = await fetch(apiUrl, {
       method: "PUT",
-      headers: {
-        Authorization: `token ${token}`,
-        "Content-Type": "application/json"
-      },
+      headers: { Authorization: `token ${token}`, "Content-Type": "application/json" },
       body: JSON.stringify(body)
     });
-
     if (!putRes.ok) throw new Error("Failed to upload to GitHub");
     return await putRes.json();
   }
 
-  // Submit form handler
+  // Submit handler
   submitBtn.addEventListener("click", async () => {
     try {
       const name = document.getElementById("name").value.trim();
@@ -68,48 +59,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
       statusMsg.textContent = "📤 Uploading photo...";
 
-      // 1️⃣ Upload photo first
       let photoFileName = "";
       if (photoFile) {
         const reader = new FileReader();
-        const fileBuffer = await new Promise((resolve, reject) => {
-          reader.onload = () => resolve(reader.result);
+        const base64Data = await new Promise((resolve, reject) => {
+          reader.onload = () => resolve(reader.result.split(",")[1]);
           reader.onerror = reject;
           reader.readAsDataURL(photoFile);
         });
-        const base64Data = fileBuffer.split(",")[1];
-        const fileBytes = atob(base64Data);
-        const byteArray = new Uint8Array(fileBytes.length);
-        for (let i = 0; i < fileBytes.length; i++) {
-          byteArray[i] = fileBytes.charCodeAt(i);
-        }
 
         const repo = "deeputsavrmlauexamsin/deeputsavrmlauexamsin.github.io";
-        const filePath = `Department/Print_Data/photos/${Date.now()}_${photoFile.name}`;
-        await uploadToGitHub(
-          token,
-          repo,
-          filePath,
-          base64Data,
-          `Upload photo for ${name}`
-        );
-        photoFileName = filePath.split("/").pop();
+        photoFileName = `${Date.now()}_${photoFile.name}`;
+        const filePath = `Department/Print_Data/photos/${photoFileName}`;
+        await uploadToGitHub(token, repo, filePath, base64Data, `Upload photo for ${name}`);
       }
 
-      statusMsg.textContent = "✅ Photo uploaded. Creating dispatch event...";
+      statusMsg.textContent = "✅ Photo uploaded. Sending dispatch...";
 
-      // 2️⃣ Send metadata (no big base64)
+      // Dispatch small JSON (no photo content)
       const payload = {
         event_type: "update_user",
-        client_payload: {
-          name,
-          phone,
-          card_number,
-          ghat,
-          role,
-          college,
-          photo_filename: photoFileName
-        }
+        client_payload: { name, phone, card_number, ghat, role, college, photo_filename: photoFileName }
       };
 
       const dispatchRes = await fetch(
@@ -125,13 +95,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       );
 
-      if (!dispatchRes.ok) {
-        const err = await dispatchRes.text();
-        throw new Error("Dispatch failed: " + err);
-      }
-
-      statusMsg.textContent = "🎉 Successfully sent to GitHub Action! It will appear live soon.";
-      alert("✅ उपयोगकर्ता विवरण GitHub पर भेज दिया गया है। कुछ मिनट में अपडेट दिखाई देगा।");
+      if (!dispatchRes.ok) throw new Error(await dispatchRes.text());
+      statusMsg.textContent = "🎉 Successfully sent! Check Actions for processing.";
+      alert("✅ उपयोगकर्ता विवरण GitHub पर भेज दिया गया है।");
     } catch (err) {
       console.error(err);
       statusMsg.textContent = "❌ Error: " + err.message;
