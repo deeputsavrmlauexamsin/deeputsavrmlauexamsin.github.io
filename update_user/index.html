@@ -3,85 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Update User | DeepUtsav</title>
+  <title>स्वयंसेवक अपडेट फॉर्म</title>
   <style>
-    body {
-      font-family: "Poppins", sans-serif;
-      background: #f0f2f5;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      max-width: 420px;
-      background: #fff;
-      margin: 60px auto;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 15px;
-    }
-    input, select, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 15px;
-    }
-    button {
-      background: #007bff;
-      color: #fff;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    button:hover { background: #0056b3; }
-    .hidden { display: none; }
-    #error { color: red; text-align: center; }
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    input, button { margin: 5px 0; padding: 8px; width: 100%; max-width: 300px; }
+    #form-section { display: none; margin-top: 20px; }
+    #error-msg { color: red; }
+    #status { color: green; margin-top: 10px; }
   </style>
 </head>
 <body>
 
-  <div class="container" id="pin-container">
-    <h2>🔒 Secure Access</h2>
-    <p>Enter your secret PIN to continue:</p>
-    <input type="password" id="pin" placeholder="Enter PIN">
+  <!-- 🔒 PIN Lock Section -->
+  <div id="lock-section">
+    <h2>🔒 कृपया पिन दर्ज करें</h2>
+    <input type="password" id="pin" placeholder="PIN">
     <button id="unlock-btn">Unlock</button>
-    <p id="error"></p>
+    <p id="error-msg"></p>
   </div>
 
-  <div class="container hidden" id="form-container">
-    <h2>🪪 Update User</h2>
-    <label>Full Name (English)</label>
-    <input id="name" placeholder="Enter full name" required>
-
-    <label>Mobile Number</label>
-    <input id="phone" placeholder="Enter phone" required>
-
-    <label>Card Number (e.g., G07-03923)</label>
-    <input id="card" placeholder="Enter card number" required>
-
-    <label>Ghat Number</label>
-    <input id="ghat" placeholder="Enter ghat number" required>
-
-    <label>Role (English)</label>
-    <input id="role" placeholder="Enter role" required>
-
-    <label>College Name (English)</label>
-    <input id="college" placeholder="Enter college" required>
-
-    <label>Upload Photo</label>
+  <!-- ✍️ Form Section -->
+  <div id="form-section">
+    <h2>उपयोगकर्ता विवरण अपडेट करें</h2>
+    <input type="text" id="name" placeholder="नाम (English)">
+    <input type="text" id="phone" placeholder="मोबाइल नंबर">
+    <input type="text" id="card_number" placeholder="Card Number (e.g. G07-03923)">
+    <input type="text" id="ghat" placeholder="Ghat Number (e.g. 7)">
+    <input type="text" id="role" placeholder="Role (e.g. Volunteer)">
+    <input type="text" id="college" placeholder="College Name">
+    <label>फ़ोटो अपलोड करें:</label>
     <input type="file" id="photo" accept="image/*">
-
-    <label>GitHub Token (required for update)</label>
-    <input type="password" id="token" placeholder="Paste your GitHub Token">
-
-    <button id="submit-btn">Upload to GitHub</button>
+    <label>GitHub Token:</label>
+    <input type="password" id="token" placeholder="Paste GitHub Token">
+    <button id="submit-btn">Submit</button>
     <p id="status"></p>
   </div>
 
-  <script src="script.js?v=2"></script>
+  <script src="script.js" defer></script>
 </body>
 </html>
