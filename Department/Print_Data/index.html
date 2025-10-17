@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print_Data</title>
+    <link href="flaty.css" rel="stylesheet">
+    <style>
+        body{margin:0;padding:0;background:#FAFAFA;font:12pt Tahoma;}
+        *{box-sizing:border-box}
+        .page{width:18cm;min-height:22cm;padding:0;margin:0 auto;background:white}
+        .responsive-image{height:auto;width:100%}
+        table{width:100%;border-collapse:collapse;margin-bottom:20px;padding:0.5cm;border:15px solid #f38610;outline:2px solid black}
+        @page{size:A4;margin:2cm}
+        @media print{body{font-size:10pt}}
+    </style>
+</head>
+<body>
+    <div class="book">
+        <div class="page">
+            <div class="container">
+                <table class="table-responsive">
+                    <thead>
+                        <tr><td colspan="5">
+                            <div class="box-title">
+                                <!-- Logo - optional -->
+                                <img src="NEWPRINTLOGO.png" class="responsive-image" alt="logo">
+                            </div>
+                        </td></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="5"><h5 style="text-align:center"><b>परिचय पत्र</b></h5></td></tr>
+
+                        <tr><td></td><td><h5 style="text-align:left"><b>  क्रo - &nbsp;&nbsp;  {{ID}}</b></h5></td></tr>
+
+                        <tr>
+                            <td colspan="2">
+                                <h5 style="text-align:left">
+                                    <img class="responsive-image" style="height:4cm; width:4cm;border:5px solid orange;" src="{{QR}}" alt="QR">
+                                </h5>
+                            </td>
+                            <td colspan="3">
+                                <h5 style="text-align:left">
+                                    <img class="responsive-image" style="height:5cm; width:4cm;border:5px solid orange;" src="{{PHOTO}}" alt="Photo">
+                                </h5>
+                            </td>
+                        </tr>
+
+                        <tr style="height:0.5cm;"></tr>
+
+                        <tr><td colspan="5" style="text-align:center;font-size:18px"><b>{{COLLEGE}}</b></td></tr>
+                        <tr style="height:0.5cm;"></tr>
+
+                        <tr><td></td><td><b>नाम :</b>&nbsp;&nbsp;</td><td colspan="3"><b>{{NAME}}</b></td></tr>
+                        <tr><td></td><td><b>मोबाइल नंo :</b></td><td colspan="3"><b>{{PHONE}}</b></td></tr>
+                        <tr><td></td><td><b>तैनाती स्थल:</b></td><td colspan="3"><b>{{GHAT}}</b></td></tr>
+                        <tr><td></td><td><b>दायित्व :</b></td><td colspan="3"><b>{{ROLE}}</b></td></tr>
+
+                        <tr style="height:1cm;"></tr>
+
+                        <tr>
+                            <td></td><td></td><td></td>
+                            <td><img class="responsive-image" style="height:1.5cm; width:2.5cm;" src="SIGNSS.png" alt="sign1"></td>
+                            <td style="text-align:right"><img class="responsive-image" style="height:1.5cm; width:3cm;" src="SIGN.png" alt="sign2"></td>
+                        </tr>
+
+                        <tr style="border-bottom:2px dashed black;">
+                            <td></td>
+                            <td style="text-align:left"><b> प्राधिकृत हस्ताक्षरी <br>संस्था/इकाई</b></td>
+                            <td></td>
+                            <td><b> नोडल अधिकारी</b></td>
+                            <td style="text-align:right"><b> प्राधिकृत हस्ताक्षरी <br> जिला प्रशासन</b></td>
+                        </tr>
+
+                        <tr style="height:0.7cm;"></tr>
+
+                        <tr><td colspan="7"><h6 style="text-align:center"><b> आपात संपर्क सूत्र-</b> +91 8808160420 &nbsp;&nbsp; +91 9170838005</h6></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
