@@ -14,8 +14,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -25,31 +23,25 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pyyaml qrcode pillow
-
-      - name: Save payload
-        run: |
-          echo '${{ toJson(github.event.client_payload) }}' > payload.json
-          echo "Payload saved"
+          pip install qrcode pillow
 
       - name: Process payload and commit
         env:
           GH_REPO: ${{ github.repository }}
+        shell: bash
         run: |
-          python3 <<'PY'
+          cat > run_update.py <<'PY'
 import base64, csv, os, json, time
 from pathlib import Path
 from PIL import Image
 import qrcode
 
-with open("payload.json","r",encoding="utf-8") as f:
-    payload=json.load(f)
+payload = json.loads(os.environ["PAYLOAD"])
 
 base = Path("Department/Print_Data")
 photos = base/"photos"
 qrs = base/"qr_codes"
 csv_path = base/"data.csv"
-
 for p in [base, photos, qrs]:
     p.mkdir(parents=True, exist_ok=True)
 
@@ -60,14 +52,16 @@ photo_data = payload.get("photo_data_url","")
 photo_filename = f"{uid}_photo.jpg"
 if photo_data.startswith("data:"):
     _,b64 = photo_data.split(",",1)
-    with open(photos/photo_filename,"wb") as f: f.write(base64.b64decode(b64))
+    with open(photos/photo_filename,"wb") as f:
+        f.write(base64.b64decode(b64))
 else:
     photo_filename=""
 
 qr_filename = f"{uid}_QR.png"
 link = f"https://{os.environ.get('GH_REPO')}/Department/Print_Data/?ID={slug}"
 qr=qrcode.QRCode(box_size=10,border=4)
-qr.add_data(link); qr.make(fit=True)
+qr.add_data(link)
+qr.make(fit=True)
 img=qr.make_image(fill_color="black",back_color="white")
 img.save(qrs/qr_filename)
 
@@ -96,7 +90,11 @@ with open(csv_path,"w",encoding="utf-8",newline="") as f:
     w.writeheader(); w.writerows(rows)
 
 os.system("git add -A")
-os.system(f'git commit -m "Add user {data["name"]} id={uid}" || true')
+os.system(f'git commit -m \"Add user {data['name']} id={uid}\" || true')
 os.system("git push origin HEAD:main || true")
 print("✅ Done:", uid)
 PY
+
+          python run_update.py
+        env:
+          PAYLOAD: ${{ toJson(github.event.client_payload) }}
