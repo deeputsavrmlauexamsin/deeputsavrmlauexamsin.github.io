@@ -1,99 +1,39 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Update User | Admin Panel</title>
-  <style>
-    body {
-      font-family: "Poppins", sans-serif;
-      background: #f3f3f3;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-      margin: 0;
-      padding: 40px 10px;
-    }
-    .hidden { display: none; }
-    .card {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      padding: 20px;
-      width: 100%;
-      max-width: 400px;
-    }
-    input, button, select {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 15px;
-    }
-    button {
-      cursor: pointer;
-      background: #0078d7;
-      color: white;
-      border: none;
-      transition: background 0.3s;
-    }
-    button:hover { background: #005fa3; }
-    h2 { text-align: center; color: #222; }
-    #status { margin-top: 10px; color: #333; font-weight: bold; }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>स्वयंसेवक अपडेट फॉर्म</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <div id="pin-screen" class="card">
-    <h2>🔒 Admin Access</h2>
-    <p>Enter PIN (4-digit):</p>
-    <input type="password" id="pin-input" placeholder="PIN डालें">
+  <!-- 🔒 PIN Lock Section -->
+  <div id="lock-section">
+    <h2>🔒 कृपया पिन दर्ज करें</h2>
+    <input type="password" id="pin" placeholder="PIN" />
     <button id="unlock-btn">Unlock</button>
+    <p id="error-msg"></p>
   </div>
 
-  <div id="main-form" class="card hidden">
-    <h2>Update User</h2>
-    <label>GitHub Token (only you see it)</label>
-    <input type="password" id="gh-token" placeholder="Paste your GitHub token here">
-    <div style="display:flex;gap:5px">
-      <button id="save-token-btn">Save Token</button>
-      <button id="clear-token-btn">Clear</button>
-    </div>
+  <!-- ✍️ Form Section (hidden by default) -->
+  <div id="form-section" style="display:none;">
+    <h2>उपयोगकर्ता विवरण अपडेट करें</h2>
+    <input type="text" id="name" placeholder="नाम (English)" /><br>
+    <input type="text" id="phone" placeholder="मोबाइल नंबर" /><br>
+    <input type="text" id="card_number" placeholder="Card Number (e.g. G07-03923)" /><br>
+    <input type="text" id="ghat" placeholder="Ghat Number (e.g. 7)" /><br>
+    <input type="text" id="role" placeholder="Role (e.g. Volunteer)" /><br>
+    <input type="text" id="college" placeholder="College Name" /><br><br>
 
-    <form id="user-form">
-      <label>नाम / Name</label>
-      <input id="name-en" required>
+    <label>फ़ोटो अपलोड करें:</label>
+    <input type="file" id="photo" accept="image/*" /><br><br>
 
-      <label>मोबाइल नंबर / Mobile</label>
-      <input id="mobile" required>
+    <label>GitHub Token:</label>
+    <input type="password" id="token" placeholder="Paste GitHub Token" /><br><br>
 
-      <label>क्र. (Card No.)</label>
-      <input id="card-no" required>
-
-      <label>तैनाती स्थल (Ghat No.)</label>
-      <input id="ghat-no" required>
-
-      <label>दायित्व / Role</label>
-      <input id="role-en" required>
-
-      <label>कॉलेज / College</label>
-      <input id="college-en" required>
-
-      <label>फ़ोटो अपलोड करें / Upload Photo</label>
-      <input type="file" id="photo-input" accept="image/*" required>
-
-      <button type="submit">Submit</button>
-    </form>
-
-    <div id="status"></div>
-
-    <div id="result-area" class="hidden">
-      <p><b>Card URL:</b> <a id="card-link" href="#" target="_blank"></a></p>
-      <img id="result-qr" width="150">
-    </div>
+    <button id="submit-btn">Submit</button>
+    <p id="status"></p>
   </div>
 
   <script src="script.js"></script>
