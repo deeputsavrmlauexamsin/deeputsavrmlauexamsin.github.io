@@ -8,97 +8,24 @@ permissions:
   contents: write
 
 jobs:
-  handle-dispatch:
+  update:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          persist-credentials: true
 
-      - name: Set up Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: '3.10'
 
-      - name: Install Python dependencies
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install qrcode pillow
 
-      - name: Save payload to file
-        run: |
-          echo '${{ toJson(github.event.client_payload) }}' > payload.json
-          echo "Saved payload.json"
+      - name: Save payload
+        run: echo '${{ toJson(github.event.client_payload) }}' > payload.json
 
-      - name: Process payload, create QR, update CSV and commit
-        env:
-          GITHUB_REPOSITORY: ${{ github.repository }}
-        run: |
-          python3 - <<'PY'
-import json, base64, csv, os, time
-from pathlib import Path
-import qrcode
-
-# Load payload
-with open("payload.json","r",encoding="utf-8") as f:
-    payload = json.load(f)
-
-# Paths
-BASE = Path("Department/Print_Data")
-PHOTOS = BASE / "photos"
-QRS = BASE / "qr_codes"
-CSV = BASE / "data.csv"
-
-for p in (BASE, PHOTOS, QRS):
-    p.mkdir(parents=True, exist_ok=True)
-
-# ID & slug
-uid = str(int(time.time()))
-slug = base64.b64encode(uid.encode()).decode()[:6]
-
-# If photo_filename provided, keep it. (Frontend should have uploaded it already)
-photo_filename = payload.get("photo_filename", "")
-
-# Generate QR linking to card
-qr_filename = f"{uid}_QR.png"
-card_link = f"https://{os.environ.get('GITHUB_REPOSITORY')}/Department/Print_Data/?ID={slug}"
-qr = qrcode.QRCode(box_size=8, border=2)
-qr.add_data(card_link)
-qr.make(fit=True)
-img = qr.make_image(fill_color="black", back_color="white")
-img.save(QRS / qr_filename)
-
-# Prepare CSV row (TSV)
-row = {
-  "id": uid,
-  "slug": slug,
-  "name": payload.get("name",""),
-  "phone": payload.get("phone",""),
-  "ghat": f"राम की पैड़ी घाट नं : {payload.get('ghat','')}",
-  "role": payload.get("role",""),
-  "photo": photo_filename,
-  "college": payload.get("college","")
-}
-
-fields = ["id","slug","name","phone","ghat","role","photo","college"]
-rows = []
-if CSV.exists():
-    txt = CSV.read_text(encoding="utf-8").strip()
-    if txt:
-        reader = csv.DictReader(txt.splitlines(), delimiter="\t")
-        rows.extend(reader)
-rows.append(row)
-with open(CSV, "w", encoding="utf-8", newline="") as f:
-    w = csv.DictWriter(f, fieldnames=fields, delimiter="\t")
-    w.writeheader()
-    w.writerows(rows)
-
-# Commit & push
-os.system('git add -A')
-os.system(f'git commit -m "Add user {row["name"]} id={uid}" || true')
-os.system('git push origin HEAD:main || true')
-
-print("DONE:", uid)
-PY
+      - name: Run update script
+        run: python .github/scripts/update_user.py
